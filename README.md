@@ -21,7 +21,11 @@ Example Connections
 Installation
 ============
 
-*work in progress*
+```
+git clone https://github.com/treychaffin/arlyn.git
+cd alicat/
+python setup.py install
+```
 
 Python Usage
 ============
