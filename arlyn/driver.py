@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any, ClassVar
-from util import Client, SerialClient, TcpClient, _is_float
+from .util import Client, SerialClient, TcpClient, _is_float
 
 class Scale:
     def __init__(self, address: str = 'COM12', **kwargs: Any) -> None:
