@@ -1,5 +1,5 @@
 """Install parameters for CLI and python import."""
-from setuptools import setup
+from setuptools import find_packages, setup
 
 with open('README.md') as in_file:
     long_description = in_file.read()
@@ -8,6 +8,8 @@ setup(
     name="arlyn",
     version="0.0.1",
     description="Python driver for Arlyn scales.",
+    package_dir={"":"arlyn"},
+    packages=find_packages(where="arlyn"),
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/treychaffin/arlyn/",
@@ -15,7 +17,7 @@ setup(
     author_email="tchaffin@aerosurvey.com",
     maintainer="Trey Chaffin",
     maintainer_email="tchaffin@aerosurvey.com",
-    packages=["arlyn"],
+    #packages=["arlyn"],
     package_data={"arlyn": ["py.typed"]},
     install_requires=["pyserial"],
     # extras_require={
