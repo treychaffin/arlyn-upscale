@@ -7,8 +7,6 @@ This repository has not been fully tested and still a work in progress
 
 TCP/Serial driver for [Arlyn UpScale Touchscreen Indicator](https://www.arlynscales.com/scales/arlyn-upscale-touchscreen-indicator/) with the RS-232 serial port upgrade option.
 
-For TCP connections, this has been tested and used with the serial device server: [Moxa NPort 5100A](https://moxa.com/en/products/industrial-edge-connectivity/serial-device-servers/general-device-servers/nport-5100a-series) 
-
 Example Connections
 ===================
 
@@ -16,6 +14,7 @@ Example Connections
 | --- | --- |
 | The standard [DB9 cable](http://www.alicat.com/wpinstall/wp-content/uploads/2013/07/MD8DB9.jpg) connected directly to a computer (unix: `/dev/ttyS0`, windows: `COM1`). | Good with older computers that still have the connector. |
 | The cable connected to a computer through a [USB converter](https://www.amazon.com/gp/product/B0007T27H8) (unix: `/dev/ttyUSB0`, windows: `COM1`). | Good for newer computers and maker boards such as Raspberry Pis. |
+| The rj45 network port on the [Arlyn UpScale Touchscreen Indicator](https://www.arlynscales.com/scales/arlyn-upscale-touchscreen-indicator/) (`192.168.1.100:23`) | Using the scale over a network connection |
 | Cables routed through a [TCP device server](https://moxa.com/en/products/industrial-edge-connectivity/serial-device-servers/general-device-servers/nport-5100a-series) (`192.168.1.100:23`). | Using the scale over a network connection |
 
 Installation
