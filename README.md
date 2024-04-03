@@ -40,7 +40,7 @@ from arlyn import Scale
 
 arlyn_address = 'ip-address:port'
 
-async def get_weight_string(scale_address):
+async def get_weight_string(scale_address: str): -> str
     '''
     Retrieve the weight string from the scale 
 
@@ -75,7 +75,7 @@ from arlyn import Scale
 
 arlyn_address = 'COM6'
 
-async def toggle_unit(scale_address):
+async def toggle_unit(scale_address: str) -> None:
     '''
     Toggles the unit change command
     kg -> g -> oz -> lb ->
@@ -105,7 +105,7 @@ from arlyn import Scale
 
 arlyn_address = 'ip-address:port'
 
-async def zero_scale(scale_address):
+async def zero_scale(scale_address: str) -> None:
     '''
     Sets the current weight on the scale to zero
 
@@ -134,7 +134,7 @@ from arlyn import Scale
 
 arlyn_address = 'COM6'
 
-async def get_json(scale_address):
+async def get_json(scale_address: str) -> str:
     '''
     Retrieve a JSON string of the scales current status
 
@@ -167,7 +167,7 @@ import re
 
 arlyn_address = 'ip-address:port'
 
-async def get_weight_dict(scale_address):
+async def get_weight_dict(scale_address: str) -> dict:
     '''
     Retrieve the weight string from the scale, then extracts the information into a dictionary
     Converts weight value into a float
@@ -204,7 +204,7 @@ from arlyn import Scale
 
 arlyn_address = 'COM6'
 
-async def change_unit(scale_address, desired_unit):
+async def change_unit(scale_address: str, desired_unit: str) -> None:
     '''
     Toggles through units until scale is set to desired unit
     kg -> g -> oz -> lb ->
