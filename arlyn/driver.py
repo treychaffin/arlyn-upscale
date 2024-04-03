@@ -67,7 +67,7 @@ class Scale:
         self._test_scale_open()
         return await self.hw._write_and_read(command)
     
-    async def print_weight(self) -> dict:
+    async def print_weight(self) -> str:
         """
 
         """
@@ -77,7 +77,7 @@ class Scale:
             raise OSError("Could not read values")
         return line
     
-    async def get_json(self) -> dict:
+    async def get_json(self) -> str:
         """
 
         """
@@ -87,14 +87,14 @@ class Scale:
             raise OSError("Could not read values")
         return line
     
-    async def toggle_unit(self) -> dict:
+    async def toggle_unit(self) -> None:
         """
 
         """
         command = '~*U*~'
         await self._write_command(command)
 
-    async def zero_scale(self) -> dict:
+    async def zero_scale(self) -> None:
         """
 
         """
