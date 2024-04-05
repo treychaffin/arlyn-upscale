@@ -3,8 +3,6 @@ arlyn
 
 *This repository was adapted from the [alicat](https://github.com/numat/alicat/tree/master) repository*
 
-This repository has not been fully tested and still a work in progress
-
 TCP/Serial driver for [Arlyn UpScale Touchscreen Indicator](https://www.arlynscales.com/scales/arlyn-upscale-touchscreen-indicator/) with the RS-232 serial port upgrade option.
 
 Example Connections
@@ -40,23 +38,14 @@ from arlyn import Scale
 
 arlyn_address = 'ip-address:port'
 
-async def get_weight_string(scale_address: str): -> str
-    '''
-    Retrieve the weight string from the scale 
-
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-
-    Returns:
-        The weight string from the scale (string)
-        ex: '03/31/2024 17:28:08, 0.00 kg'
-    '''
+async def get_weight_string(scale_address: str) -> str:
+    '''Retrieve the weight string from the scale'''
     async with Scale(scale_address) as scale:
-        return await scale.print_weight()
+        return await scale.get_weight_string()
 
 print(await get_weight_string(arlyn_address))
 ```
-The method and the function shown will return a string showing the date, time, weight, and unit from the scale
+The method and the function shown will return a string showing the date, time, weight, unit, and whether or not the scale is in net mode.
 
 ```python
 '03/31/2024 17:28:08, 0.00 kg'
@@ -76,16 +65,7 @@ from arlyn import Scale
 arlyn_address = 'COM6'
 
 async def toggle_unit(scale_address: str) -> None:
-    '''
-    Toggles the unit change command
-    kg -> g -> oz -> lb ->
-
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-
-    Returns:
-        nothing
-    '''
+    '''Toggles the unit change command'''
     async with Scale(scale_address) as scale:
         await scale.toggle_unit()
 
@@ -103,18 +83,10 @@ This `.zero_scale` method inputs the `~*Z*~` serial command (shown in the [Arlyn
 ```python
 from arlyn import Scale
 
-arlyn_address = 'ip-address:port'
+arlyn_address = '/dev/ttyS0'
 
 async def zero_scale(scale_address: str) -> None:
-    '''
-    Sets the current weight on the scale to zero
-
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-
-    Returns:
-        nothing
-    '''
+    '''Sets the current weight on the scale to zero'''
     async with Scale(scale_address) as scale:
         await scale.zero_scale()
 
@@ -125,7 +97,63 @@ This method and function shown returns nothing
 
 ## JSON String
 
-This `.get_json` method inputs the `~*W*~` serial command (shown in the [Arlyn UpScale Touchscreen User Manual](https://www.arlynscales.com/arlyn-upscale-touchscreen-indicator-user-manual/))
+This `.get_json` method inputs the `~*W*~` serial command (shown in the [Arlyn UpScale Touchscreen User Manual](https://www.arlynscales.com/arlyn-upscale-touchscreen-indicator-user-manual/)). 
+The JSON string is converted into a dictionary.
+
+### Example Usage
+
+```python
+from arlyn import Scale
+
+arlyn_address = '/dev/ttyUSB0'
+
+async def get_json(scale_address: str) -> dict:
+    '''Retrieve a JSON string of the scales current status'''
+    async with Scale(scale_address) as scale:
+        return await scale.get_json()
+
+print(await get_json(arlyn_address))
+```
+
+This method and function shown will return a dictionary
+
+```python
+{'bSIndi': True, 'sNet': '', 'sUnit': 'kg', 'sWeight': '0.05', '_CMD_ACK': 'ACK', '_id': 1, '_name': '*W', '_rSNo': 42, '_sSNo': 24}
+```
+
+## Weight Dictionary
+
+The `.get_weight_dict` method obtains the the weight string from using the `.get_weight_string` method.
+Then, regex is used to extract and organize the information from the string into a dictionary.
+
+### Example Usage
+
+```python
+from arlyn import Scale
+
+arlyn_address = 'ip-address:port'
+
+async def get_weight_dict(scale_address: str) -> dict:
+    '''
+    Retrieve the weight string from the scale, then extracts the information into 
+    a dictionary. Converts weight value into a float
+    '''
+    async with Scale(scale_address) as scale:
+        return await scale.get_weight_dict()
+
+print(await get_weight_dict(arlyn_address))
+```
+
+This method and function shown will return a dictionary:
+
+```python
+{'date': '04/05/2024', 'time': '11:39:30', 'weight': 50.0, 'unit': 'g', 'netMode': False}
+```
+
+## Change Unit
+
+The `.change_unit` method used the `.toggle_unit` method to change the unit value to 
+the desired unit.
 
 ### Example Usage
 
@@ -134,104 +162,12 @@ from arlyn import Scale
 
 arlyn_address = 'COM6'
 
-async def get_json(scale_address: str) -> str:
-    '''
-    Retrieve a JSON string of the scales current status
-
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-
-    Returns:
-        JSON string of current scale status
-        ex: '{"bSIndi":true,"sNet":"","sUnit":"kg","sWeight":"0.00","_CMD_ACK":"ACK","_id":1,"_name":"*W","_rSNo":42,"_sSNo":18}'
-    '''
-    async with Scale(scale_address) as scale:
-        return await scale.get_json()
-
-print(await get_json(arlyn_address))
-```
-
-This method and function shown will return a JSON string
-
-```python
-'{"bSIndi":true,"sNet":"","sUnit":"kg","sWeight":"0.00","_CMD_ACK":"ACK","_id":1,"_name":"*W","_rSNo":42,"_sSNo":18}'
-```
-
-## Get weight dictionary
-
-This example function shown will use the `get_weight_string(scale_address)` function shown earlier to retrieve the weight string and use regex to organize the data into a dictionary.
-
-```python
-from arlyn import Scale
-import re
-
-arlyn_address = 'ip-address:port'
-
-async def get_weight_dict(scale_address: str) -> dict:
-    '''
-    Retrieve the weight string from the scale, then extracts the information into a dictionary
-    Converts weight value into a float
-
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-
-    Returns:
-        The weight string from the scale (dict)
-        ex: {'date': '03/31/2024', 'time': '17:35:55', 'weight': 0.0, 'unit': 'kg'}
-    '''
-    weight_string = await get_weight_string(scale_address)
-    date = re.search(r"\d{2}/\d{2}/\d{4}",weight_string).group()
-    time = re.search(r"\d{2}:\d{2}:\d{2}",weight_string).group()
-    weight = re.search(r", .* ",weight_string).group()[2:-1]
-    unit = re.search(r"[a-zA-Z]{1,2}",weight_string).group()
-    return {"date":date,"time":time,"weight":float(weight),"unit":unit}
-
-print(await get_weight_dict(arlyn_address))
-```
-
-Output:
-
-```python
-{'date': '03/31/2024', 'time': '17:35:55', 'weight': 0.0, 'unit': 'kg'}
-```
-
-## Change to specified unit
-
-This example function uses the `toggle_unit(scale_address)` function shown earlier to set the scale to a desired unit.
-
-```python
-from arlyn import Scale
-
-arlyn_address = 'COM6'
-
 async def change_unit(scale_address: str, desired_unit: str) -> None:
-    '''
-    Toggles through units until scale is set to desired unit
-    kg -> g -> oz -> lb ->
+    '''Toggles through units until scale is set to desired unit'''
+    async with Scale(scale_address) as scale:
+        return await scale.change_unit(desired_unit)
 
-    Args:
-        scale_address: The serial or TCP address of the scale (string)
-        desired_unit: The unit to change the scale to (string)
-
-    Returns:
-        nothing
-    '''
-    units = ('kg','g','oz','lb')
-    assert desired_unit in units, (
-    "desired unit must be one of the following: kg, g, oz, lb")
-
-    unit = await get_weight_dict(scale_address)
-    unit = unit['unit']
-
-    if desired_unit != unit:
-        toggle_count = units.index(desired_unit) - units.index(unit) + len(units)
-        for i in range(toggle_count):
-            await toggle_unit(scale_address)
-        unit = await get_weight_dict(scale_address)
-        unit = unit['unit']
-        print(f"unit set to: {unit}")
-    else:
-        print(f"unit was already set to: {unit}")
-
-await change_unit(arlyn_address,'g')
+await change_unit(arlyn_address, 'kg')
 ```
+
+This method and function shown does not return anything.

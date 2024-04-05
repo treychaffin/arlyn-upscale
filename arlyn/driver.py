@@ -1,6 +1,6 @@
 from __future__ import annotations
-
-import asyncio
+import json
+import re
 from typing import Any, ClassVar
 from .util import Client, SerialClient, TcpClient, _is_float
 
@@ -58,46 +58,68 @@ class Scale:
             raise OSError(f"The scale with port {self.hw.address} is not open")
         
     async def _write_and_read(self, command: str) -> str | None:
-        """Wrap the communicator request, to call _test_scale_open() before any request."""
+        """Wrap the communicator request, to call _test_scale_open() 
+        before any request."""
         self._test_scale_open()
         return await self.hw._write_and_read(command)
     
     async def _write_command(self, command: str) -> str | None:
-        """Wrap the communicator request, to call _test_scale_open() before any request."""
+        """Wrap the communicator request, to call _test_scale_open() 
+        before any request."""
         self._test_scale_open()
         return await self.hw._write_and_read(command)
     
-    async def print_weight(self) -> str:
-        """
-
-        """
+    async def get_weight_string(self) -> str:
+        """print the weight string"""
         command = '~*P*~'
         line = await self._write_and_read(command)
-        if not line:
-            raise OSError("Could not read values")
+        if not line: raise OSError("Could not read values")
         return line
     
-    async def get_json(self) -> str:
-        """
-
-        """
+    async def get_json(self) -> dict:
+        """retrieve JSON string string from the scale"""
         command = '~*W*~'
         line = await self._write_and_read(command)
-        if not line:
-            raise OSError("Could not read values")
-        return line
+        if not line: raise OSError("Could not read values")
+        return json.loads(line)
     
     async def toggle_unit(self) -> None:
-        """
-
-        """
+        """toggle the unit"""
         command = '~*U*~'
         await self._write_command(command)
 
-    async def zero_scale(self) -> None:
-        """
+    async def change_unit(self, desired_unit: str) -> None:
+        """toggles through units until scale is set to desired unit"""
 
-        """
+        units = ('kg','g','oz','lb')
+        if desired_unit not in units:
+            raise ValueError("desired unit must be one of the following: kg, g, oz, lb")
+        
+        unit = (await self.get_json())["sUnit"]
+
+        if desired_unit != unit:
+            toggle_count = units.index(desired_unit) - units.index(unit) + len(units)
+            for i in range(toggle_count):
+                await self.toggle_unit()
+
+    async def get_weight_dict(self) -> dict:
+        '''
+        Retrieve the weight string from the scale, then extracts the information into 
+        a dictionary. Converts weight value into a float
+
+        contains time and date, unlike get_json method
+        '''
+        weight_string = await self.get_weight_string()
+        date = re.search(r"\d{2}/\d{2}/\d{4}",weight_string).group()
+        time = re.search(r"\d{2}:\d{2}:\d{2}",weight_string).group()
+        unit = re.search(r"kg|g|oz|lb",weight_string).group()
+        netMode = True if re.search(r"net",weight_string) else False
+        weight = re.search(r", -?\d+.\d+ |, -?\d+ ",weight_string).group()[2:-1]
+    
+        return {"date":date,"time":time,"weight":float(weight),"unit":unit, "netMode":netMode}
+    
+    async def zero_scale(self) -> None:
+        """zero the scale"""
         command = '~*Z*~'
         await self._write_command(command)
     
