@@ -227,10 +227,3 @@ class SerialClient(Client):
 
     async def _handle_connection(self) -> None:
         self.open = True
-
-def _is_float(msg: Any) -> bool:
-    try:
-        float(msg)
-        return True
-    except ValueError:
-        return False
