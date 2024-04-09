@@ -6,7 +6,7 @@ with open('README.md') as in_file:
 
 setup(
     name="arlyn",
-    version="0.0.2",
+    version="0.0.3",
     description="Python driver for Arlyn scales.",
     package_dir={"":"arlyn"},
     packages=find_packages(where="arlyn"),
@@ -19,6 +19,12 @@ setup(
     maintainer_email="tchaffin@aerosurvey.com",
     package_data={"arlyn": ["py.typed"]},
     install_requires=["pyserial"],
+    extras_require={
+            'test': [
+                'pytest>=8,<9',
+                'pytest-asyncio>=0.23.5',
+            ],
+        },
     license="GPLv2",
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
