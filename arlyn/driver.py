@@ -1,8 +1,8 @@
 from __future__ import annotations
 import json
 import re
-from typing import Any, ClassVar
-from .util import Client, SerialClient, TcpClient, _is_float
+from typing import Any
+from .util import Client, SerialClient, TcpClient
 
 class Scale:
     def __init__(self, address: str = 'COM12', **kwargs: Any) -> None:
@@ -10,8 +10,8 @@ class Scale:
             self.hw: Client = SerialClient(address=address, **kwargs)
         else: #TCP 
             self.hw = TcpClient(address=address, **kwargs)
-        self.keys = ['mass']
         self.open = True
+        self.units = ('kg','g','oz','lb')
 
     async def __aenter__(self, *args: Any) -> Scale:
         """Provide async enter to context manager."""
@@ -23,7 +23,7 @@ class Scale:
         return
     
     @classmethod
-    async def is_connected(cls, port: str, unit: str = 'A') -> bool:
+    async def is_connected(cls, port: str) -> bool:
         """Return True if the specified port is connected to this device.
 
         This class can be used to automatically identify ports with connected
@@ -33,7 +33,7 @@ class Scale:
         """
         is_device = False
         try:
-            device = cls(port, unit)
+            device = cls(port)
             try:
                 c = await device.get()
                 if cls.__name__ == 'Scale':
@@ -76,29 +76,42 @@ class Scale:
         if not line: raise OSError("Could not read values")
         return line
     
-    async def get_json(self) -> dict:
+    async def get_json_dict(self) -> dict:
         """retrieve JSON string string from the scale"""
         command = '~*W*~'
         line = await self._write_and_read(command)
         if not line: raise OSError("Could not read values")
         return json.loads(line)
     
+    async def get_json_string(self) -> str:
+        """retrieve JSON string string from the scale"""
+        command = '~*W*~'
+        line = await self._write_and_read(command)
+        if not line: raise OSError("Could not read values")
+        return line
+    
+    async def get_unit(self) -> str:
+        """return the current unit"""
+        json_dict = await self.get_json_dict()
+        current_unit = json_dict['sUnit']
+        return current_unit
+            
     async def toggle_unit(self) -> None:
         """toggle the unit"""
         command = '~*U*~'
         await self._write_command(command)
+        await self.get_unit()
 
     async def change_unit(self, desired_unit: str) -> None:
         """toggles through units until scale is set to desired unit"""
 
-        units = ('kg','g','oz','lb')
-        if desired_unit not in units:
+        if desired_unit not in self.units:
             raise ValueError("desired unit must be one of the following: kg, g, oz, lb")
         
-        unit = (await self.get_json())["sUnit"]
+        unit = (await self.get_json_dict())["sUnit"]
 
         if desired_unit != unit:
-            toggle_count = units.index(desired_unit) - units.index(unit) + len(units)
+            toggle_count = self.units.index(desired_unit) - self.units.index(unit) + len(self.units)
             for i in range(toggle_count):
                 await self.toggle_unit()
 
