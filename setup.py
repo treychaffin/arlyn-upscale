@@ -1,30 +1,29 @@
 """Install parameters for CLI and python import."""
-from setuptools import find_packages, setup
+from setuptools import setup
 
 with open('README.md') as in_file:
     long_description = in_file.read()
 
 setup(
-    name="arlyn",
-    version="0.0.3",
-    description="Python driver for Arlyn scales.",
-    package_dir={"":"arlyn"},
-    packages=find_packages(where="arlyn"),
+    name="arlynupscale",
+    version="0.0.6",
+    description="Python driver for Arlyn UpScale Indicators.",
+    packages=["arlynupscale"],
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url="https://github.com/treychaffin/arlyn/",
+    url="https://github.com/treychaffin/arlyn-upscale/",
     author="Trey Chaffin",
-    author_email="tchaffin@aerosurvey.com",
+    author_email="treychaffin@gmail.com",
     maintainer="Trey Chaffin",
-    maintainer_email="tchaffin@aerosurvey.com",
-    package_data={"arlyn": ["py.typed"]},
+    maintainer_email="treychaffin@gmail.com",
+    package_data={"arlyn-upscale": ["py.typed"]},
     install_requires=["pyserial"],
     extras_require={
-            'test': [
-                'pytest>=8,<9',
-                'pytest-asyncio>=0.23.5',
-            ],
-        },
+        'test': [
+            'pytest>=8,<9',
+            'pytest-asyncio>=0.23.5',
+        ],
+    },
     license="GPLv2",
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
@@ -38,5 +37,5 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-    ]
+    ],
 )

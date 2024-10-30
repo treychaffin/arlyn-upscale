@@ -1,3 +1,31 @@
+Metadata-Version: 2.1
+Name: arlynupscale
+Version: 0.0.6
+Summary: Python driver for Arlyn UpScale Indicators.
+Home-page: https://github.com/treychaffin/arlyn-upscale/
+Author: Trey Chaffin
+Author-email: treychaffin@gmail.com
+Maintainer: Trey Chaffin
+Maintainer-email: treychaffin@gmail.com
+License: GPLv2
+Classifier: License :: OSI Approved :: GNU General Public License v2 (GPLv2)
+Classifier: Development Status :: 4 - Beta
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Human Machine Interfaces
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: pyserial
+Provides-Extra: test
+Requires-Dist: pytest<9,>=8; extra == "test"
+Requires-Dist: pytest-asyncio>=0.23.5; extra == "test"
+
 arlyn-upscale
 =====
 

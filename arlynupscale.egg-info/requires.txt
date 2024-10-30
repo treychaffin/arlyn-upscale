@@ -1,0 +1,5 @@
+pyserial
+
+[test]
+pytest<9,>=8
+pytest-asyncio>=0.23.5
